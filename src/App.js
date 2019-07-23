@@ -23,6 +23,27 @@ class App extends Component {
 
   }
 
+  postApiCall = (endpoint, postObject) => {
+    return new Promise((resolve, reject) => {
+      // let postObject = { "file": file };
+      let url = "http://ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000" + endpoint;
+      const response = await fetch('url', {
+        method: 'POST',
+        body: JSON.stringify(postObject), // string or object
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          'Access-Control-Allow-Credentials': true,
+          'Access-Control-Allow-Origin': '*',
+        }
+      });
+      const myJson = await response.json(); //extract JSON from the http response
+      console.log(myJson)
+      // return myJson;
+      resolve(myJson);
+    })
+  }
+
   updateEditorData(newFilePath) {
     console.log(newFilePath);
     this.setState(prevState => ({
@@ -92,14 +113,14 @@ class App extends Component {
   }
 
   componentDidMount() {
-        // document.querySelector('textarea').addEventListener('input', function () {
-          document.getElementById('editor').addEventListener('input', function () {
+    // document.querySelector('textarea').addEventListener('input', function () {
+    document.getElementById('editor').addEventListener('input', function () {
 
-            var coordinates = getCaretCoordinates(this, this.selectionEnd);
-            console.log(coordinates)
-            // console.log(coordinates.top);
-            // console.log(coordinates.left);
-          })
+      var coordinates = getCaretCoordinates(this, this.selectionEnd);
+      console.log(coordinates)
+      // console.log(coordinates.top);
+      // console.log(coordinates.left);
+    })
     // const { endpoint } = this.state;
     // const socket = socketIOClient("http://127.0.0.1:3000");
     const socket = socketIOClient('ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000')
@@ -151,7 +172,7 @@ class App extends Component {
   extractFiles = (files) => {
     console.log(files)
     var onlyfiles = [];
-    this.setState({ allFiles: this.getFiles(files, onlyfiles)});
+    this.setState({ allFiles: this.getFiles(files, onlyfiles) });
   }
 
   getFiles = (files, onlyfiles) => {
@@ -165,7 +186,7 @@ class App extends Component {
         this.getFiles(file.data, onlyfiles);
       }
     });
-      console.log(onlyfiles)
+    console.log(onlyfiles)
     return onlyfiles;
   }
 
@@ -214,8 +235,12 @@ class App extends Component {
         </div>
         <div style={commitButtonContainer}>
           <ButtonToolbar>
-            <Button variant="success" onClick={() => { console.log("Commit Button Clicked") }}>Commit</Button>
-            <Button variant="info" onClick={() => { console.log("Save button clicked") }}>Save</Button>
+            <Button variant="success" onClick={() => {
+              this.postApiCall('/updateFile', { file: this.state.currentEditorFileName, data: this.state.editorData }).then(() => {
+                this.postApiCall('/commitFile', { filepath: this.state.currentEditorFileName, commitMessage: "New commit message" })
+              })
+            }}>Commit</Button>
+            <Button variant="info" onClick={() => { this.postApiCall('/updateFile', { file: this.state.currentEditorFileName, data: this.state.editorData }) }}>Save</Button>
           </ButtonToolbar>
         </div>
         <textarea style={textAreaStyle} name="body" id="editor"
