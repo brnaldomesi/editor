@@ -189,7 +189,7 @@ class App extends Component {
     let textAreaStyle = {
       margin: "0px",
       position: "absolute",
-      top: "80px",
+      top: "120px",
       bottom: "0px",
       left: "0px",
       right: "0px",
