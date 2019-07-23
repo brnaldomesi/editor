@@ -23,11 +23,11 @@ class App extends Component {
 
   }
 
-  postApiCall = (endpoint, postObject) => {
+  postApiCall = async(endpoint, postObject) => {
     return new Promise((resolve, reject) => {
       // let postObject = { "file": file };
       let url = "http://ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000" + endpoint;
-      const response = await fetch('url', {
+      const response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify(postObject), // string or object
         headers: {
