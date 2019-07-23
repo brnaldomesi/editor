@@ -14,7 +14,7 @@ class App extends Component {
     super();
     this.state = {
       response: [],
-      endpoint: "http://localhost:3000",
+      // endpoint: "http://localhost:3000",
       editorData: "",
       currentEditorFileName: "",
       allFiles: []
@@ -106,8 +106,8 @@ class App extends Component {
             // console.log(coordinates.left);
           })
     // const { endpoint } = this.state;
-    const socket = socketIOClient("http://127.0.0.1:3000");
-    // const socket = socketIOClient('ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000')
+    // const socket = socketIOClient("http://127.0.0.1:3000");
+    const socket = socketIOClient('ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000')
 
 
     socket.on('connect', () => {
