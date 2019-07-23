@@ -23,8 +23,8 @@ class App extends Component {
 
   }
 
-  postApiCall = async(endpoint, postObject) => {
-    return new Promise((resolve, reject) => {
+  postApiCall = async (endpoint, postObject) => {
+    // return new Promise((resolve, reject) => {
       // let postObject = { "file": file };
       let url = "http://ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000" + endpoint;
       const response = await fetch(url, {
@@ -39,9 +39,9 @@ class App extends Component {
       });
       const myJson = await response.json(); //extract JSON from the http response
       console.log(myJson)
-      // return myJson;
-      resolve(myJson);
-    })
+      return myJson;
+      // resolve(myJson);
+    // })
   }
 
   updateEditorData(newFilePath) {
