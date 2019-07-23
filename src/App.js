@@ -36,11 +36,6 @@ class App extends Component {
         }
       }))[0].filedata
     }))
-
-    // this.setState({currentEditorFileName : newFilePath})
-    // this.getFileFromApi(file.filepath)
-    //   .then(data=>this.setState({editorData: data.response}));
-
   }
   showTabs() {
     var divStyle = {
@@ -194,7 +189,7 @@ class App extends Component {
     let textAreaStyle = {
       margin: "0px",
       position: "absolute",
-      top: "200px",
+      top: "80px",
       bottom: "0px",
       left: "0px",
       right: "0px",
