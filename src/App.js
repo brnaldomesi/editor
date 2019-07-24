@@ -17,7 +17,9 @@ class App extends Component {
       // endpoint: "http://localhost:3000",
       editorData: "",
       currentEditorFileName: "",
-      allFiles: []
+      allFiles: [],
+      dropDownActive: false,
+      dropDownWord: ""
     };
     this.showTabs = this.showTabs.bind(this);
 
@@ -25,22 +27,22 @@ class App extends Component {
 
   postApiCall = async (endpoint, postObject) => {
     // return new Promise((resolve, reject) => {
-      // let postObject = { "file": file };
-      let url = "http://ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000" + endpoint;
-      const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(postObject), // string or object
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          'Access-Control-Allow-Credentials': true,
-          'Access-Control-Allow-Origin': '*',
-        }
-      });
-      const myJson = await response.json(); //extract JSON from the http response
-      console.log(myJson)
-      return myJson;
-      // resolve(myJson);
+    // let postObject = { "file": file };
+    let url = "http://ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000" + endpoint;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(postObject), // string or object
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Access-Control-Allow-Credentials': true,
+        'Access-Control-Allow-Origin': '*',
+      }
+    });
+    const myJson = await response.json(); //extract JSON from the http response
+    console.log(myJson)
+    return myJson;
+    // resolve(myJson);
     // })
   }
 
@@ -49,7 +51,8 @@ class App extends Component {
     this.setState(prevState => ({
       response: prevState.response.map(
         el => el.filepath === this.state.currentEditorFileName ? { ...el, filedata: this.state.editorData } : el
-      ),
+      ),      // body: JSON.stringify(postObject), // string or object
+
       currentEditorFileName: newFilePath,
       editorData: (prevState.response.filter(el => {
         if (el.filepath === newFilePath) {
@@ -107,9 +110,7 @@ class App extends Component {
     });
     const myJson = await response.json(); //extract JSON from the http response
     console.log(myJson);
-    // this.setState({ allFiles: myJson })
     this.extractFiles(myJson);
-    // return myJson;
   }
 
   componentDidMount() {
@@ -121,7 +122,7 @@ class App extends Component {
       // console.log(coordinates.top);
       // console.log(coordinates.left);
     })
-    // const { endpoint } = this.state;
+
     // const socket = socketIOClient("http://127.0.0.1:3000");
     const socket = socketIOClient('ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000')
 
@@ -133,7 +134,7 @@ class App extends Component {
     socket.on("OpenedFiles", (from, message) => {
       console.log(from, message);
 
-      // Tells is file is already displaying in editor
+      // Tells if file is already displaying in editor
       if (this.state.response.map(function (e) { return e.filepath; }).indexOf(message) < 0) {
         let file = {
           "filepath": message
@@ -153,7 +154,6 @@ class App extends Component {
         this.setState({ currentEditorFileName: message })
         this.getFileFromApi(message).then(data => {
           console.log(data);
-          // let position = this.state.response.map(function(e) { return e.filepath; }).indexOf(filepath);
           this.setState({ editorData: data.response });
           this.setState(prevState => ({
             response: prevState.response.map(
@@ -192,11 +192,45 @@ class App extends Component {
 
   handleChange = (event) => {
     let wordArray = event.target.value.split("");
-    let word = "";
-    if (wordArray[wordArray.length - 1] == '@') {
-      console.log("@ detected");
-    }
+    console.log(wordArray[wordArray.length - 1]);
+    let currentWord = wordArray[wordArray.length - 1];
+    // let word = "";
+    let updatingdiv = new Promise((resolve, reject) => {
+      if (wordArray[wordArray.length - 1] == '@') {
+        console.log("@ detected");
+        this.setState({ dropDownActive: true })
+        document.getElementById('dropdown').style.display = "block";
+        resolve();
+      }
+      else if (wordArray[wordArray.length - 1] === " ") {
+        this.setState({ dropDownWord: "", dropDownActive: false })
+        document.getElementById('dropdown').style.display = "none";
+        resolve();
+      } else {
+        resolve();
+      }
+    })
+    updatingdiv.then(() => {
+      if (this.state.dropDownActive && currentWord !== '@') {
+        this.setState({ dropDownWord: this.state.dropDownWord + wordArray[wordArray.length - 1] })
+      }
+    })
     this.setState({ editorData: event.target.value });
+  }
+
+  displayDropDown = () => {
+    // let liArray
+    if (this.state.dropDownActive) {
+      return (
+        this.state.allFiles.map(file => {
+          if (file.value.includes(this.state.dropDownWord)) {
+            return (<li>{file.id}</li>);
+          }
+        })
+      )
+    } else {
+      return null;
+    }
   }
 
   render() {
@@ -227,11 +261,26 @@ class App extends Component {
       // zIndex: 1
     }
 
+    let dropDownContainer = {
+      position: "absolute",
+      zIndex: 1,
+      top: '200px',
+      display: 'none',
+      maxHeight: "200px",
+      color: "white"
+    }
+
     return (
       <div>
         <div style={flexStyle} className="flex-container">
           {this.showTabs()}
           {/* {this.extractFiles(this.state.allFiles)} */}
+        </div>
+        <div id="dropdown" style={dropDownContainer}>
+          {/* This is dummy div */}
+          <ul>
+            {this.displayDropDown()}
+          </ul>
         </div>
         <div style={commitButtonContainer}>
           <ButtonToolbar>
