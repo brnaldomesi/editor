@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@webscopeio/react-textarea-autocomplete": "^4.6.1",
+    "caret-pos": "^1.2.1",
     "jquery": "^3.4.1",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.9",

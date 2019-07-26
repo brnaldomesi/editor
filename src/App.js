@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button';
 import { ButtonToolbar } from 'react-bootstrap';
 import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 var getCaretCoordinates = require('textarea-caret-position');
+import { position, offset } from 'caret-pos';
+
 
 
 /* eslint-disable */
@@ -19,7 +21,21 @@ class App extends Component {
       currentEditorFileName: "",
       allFiles: [],
       dropDownActive: false,
-      dropDownWord: ""
+      dropDownWord: "",
+      backspace: false,
+      startIndex: -1,
+      dropDownContainer : {
+        position: "absolute",
+        zIndex: 1,
+        top: '200px',
+        display: 'none',
+        maxHeight: "200px",
+        maxWidth: "500px",
+        height : 'fit-content',
+        color: "black",
+        left : '0',
+        backgroundColor: 'white'
+      }
     };
     this.showTabs = this.showTabs.bind(this);
 
@@ -51,7 +67,7 @@ class App extends Component {
     this.setState(prevState => ({
       response: prevState.response.map(
         el => el.filepath === this.state.currentEditorFileName ? { ...el, filedata: this.state.editorData } : el
-      ),      // body: JSON.stringify(postObject), // string or object
+      ),
 
       currentEditorFileName: newFilePath,
       editorData: (prevState.response.filter(el => {
@@ -112,20 +128,34 @@ class App extends Component {
     console.log(myJson);
     this.extractFiles(myJson);
   }
+  // escFunction = (event) => {
+  //   // if(event.keycode === 27) {
+  //   //   return true;
+  //   // }
+  //   if(event.key == "Backspace"){
+  //     this.setState({backspace : true});
+  //   }
+  // }
 
   componentDidMount() {
-    // document.querySelector('textarea').addEventListener('input', function () {
-    document.getElementById('editor').addEventListener('input', function () {
+    // document.getElementById('editor').addEventListener('input', function () {
+    //   var coordinates = getCaretCoordinates(this, this.selectionEnd);
+    //   console.log(coordinates)
+    // });
+    // var cursorPosition = $('#myTextarea').prop("selectionStart");
+    // console.log(document.getElementById('editor').prop("selectionEnd"));
 
-      var coordinates = getCaretCoordinates(this, this.selectionEnd);
-      console.log(coordinates)
-      // console.log(coordinates.top);
-      // console.log(coordinates.left);
-    })
-
+    // document.getElementById('editor').addEventListener("keydown", this.escFunction, false);
     // const socket = socketIOClient("http://127.0.0.1:3000");
-    const socket = socketIOClient('ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000')
 
+    // document.querySelector('textarea').addEventListener('input', function () {
+    //   var coordinates = getCaretCoordinates(this, this.selectionEnd);
+    //   // console.log(coordinates.top);
+    //   // console.log(coordinates.left);
+    //   console.log(coordinates)
+    // })
+
+    const socket = socketIOClient('ec2-18-219-87-48.us-east-2.compute.amazonaws.com:3000');
 
     socket.on('connect', () => {
       console.log("Connected");
@@ -191,31 +221,76 @@ class App extends Component {
   }
 
   handleChange = (event) => {
+
+
+    // console.log(event.target.selectionEnd);
+    console.log(event)
+    let value = event.target.value;
+    let currentIndex = event.target.selectionEnd;
+    console.log(currentIndex)
     let wordArray = event.target.value.split("");
     console.log(wordArray[wordArray.length - 1]);
     let currentWord = wordArray[wordArray.length - 1];
-    // let word = "";
-    let updatingdiv = new Promise((resolve, reject) => {
-      if (wordArray[wordArray.length - 1] == '@') {
-        console.log("@ detected");
-        this.setState({ dropDownActive: true })
-        document.getElementById('dropdown').style.display = "block";
-        resolve();
-      }
-      else if (wordArray[wordArray.length - 1] === " ") {
-        this.setState({ dropDownWord: "", dropDownActive: false })
-        document.getElementById('dropdown').style.display = "none";
-        resolve();
-      } else {
-        resolve();
-      }
+    let word = "";
+    let startIndex = event.target.selectionEnd;
+
+    const input = document.querySelector('textarea');
+    const pos = position(input); // { left: 15, top: 30, height: 20, pos: 15 }
+    console.log(pos); 
+    // currentDropDown = this.state.dropDownContainer
+    this.setState({ dropDownContainer : {...this.state.dropDownContainer, top: 120 + pos.top + 30, left : pos.left - 20 }})
+    // let updatingdiv = new Promise((resolve, reject) => {
+    //   if (wordArray[wordArray.length - 1] == '@') {
+    //     console.log("@ detected");
+    //     console.log(event.target.selectionEnd);
+    //     let startIndex = event.target.selectionEnd;
+    //     this.setState({ dropDownActive: true, startIndex : startIndex });
+    //     document.getElementById('dropdown').style.display = "block";
+    //     resolve({value, currentIndex});
+    //   }
+    //   else if (wordArray[wordArray.length - 1] === " ") {
+    //     this.setState({ dropDownWord: "", dropDownActive: false })
+    //     document.getElementById('dropdown').style.display = "none";
+    //     resolve({value, currentIndex});
+    //   } else {
+    //     resolve({value, currentIndex});
+    //   }
+    // })
+    let updatingState = new Promise((resolve, reject) => {
+      this.setState({ editorData: event.target.value });
+      resolve({value, currentIndex,startIndex});
     })
-    updatingdiv.then(() => {
-      if (this.state.dropDownActive && currentWord !== '@') {
-        this.setState({ dropDownWord: this.state.dropDownWord + wordArray[wordArray.length - 1] })
-      }
+    updatingState.then(({value, currentIndex, startIndex}) => {
+      let updatingdiv = new Promise((resolve, reject) => {
+        console.log(currentIndex);
+        console.log(this.state.editorData)
+        console.log(this.state.editorData.charAt(currentIndex - 1))
+        if (this.state.editorData.charAt(currentIndex - 1) == '@') {
+          console.log("@ detected");
+          this.setState({ dropDownActive: true, startIndex: startIndex });
+          document.getElementById('dropdown').style.display = "block";
+          resolve({ value, currentIndex });
+
+        } else if (this.state.editorData.charAt(currentIndex - 1) == " ") {
+          this.setState({ dropDownWord: "", dropDownActive: false })
+          document.getElementById('dropdown').style.display = "none";
+          resolve({ value, currentIndex });
+        }
+        resolve({value, currentIndex})
+      })
+      updatingdiv.then(({ value, currentIndex }) => {
+        console.log("In last block")
+        // if (this.state.dropDownActive) {
+          // if (currentWord !== '@') {
+            console.log(value.slice(this.state.startIndex, currentIndex))
+            // this.setState({ dropDownWord: this.state.dropDownWord + wordArray[wordArray.length - 1] })
+            // this.setState({ dropDownWord: (value.split(' ')[value.split(' ').length - 1].split('@')[1] || "").toLowerCase() })
+            this.setState({ dropDownWord: value.slice(this.state.startIndex, currentIndex).toLowerCase() })
+          // }
+        // }
+      })
     })
-    this.setState({ editorData: event.target.value });
+
   }
 
   displayDropDown = () => {
@@ -223,14 +298,22 @@ class App extends Component {
     if (this.state.dropDownActive) {
       return (
         this.state.allFiles.map(file => {
-          if (file.value.includes(this.state.dropDownWord)) {
-            return (<li>{file.id}</li>);
+          if (file.value.toLowerCase().includes(this.state.dropDownWord)) {
+            return (<p>{file.id} <hr /></p> );
           }
         })
       )
     } else {
       return null;
     }
+  }
+
+  onKeyDown = (e) => {
+    if (e.keyCode == 8) {
+      console.log('delete');
+      this.setState({ backspace: true });
+    }
+    console.log(e.keyCode)
   }
 
   render() {
@@ -261,14 +344,14 @@ class App extends Component {
       // zIndex: 1
     }
 
-    let dropDownContainer = {
-      position: "absolute",
-      zIndex: 1,
-      top: '200px',
-      display: 'none',
-      maxHeight: "200px",
-      color: "white"
-    }
+    // let dropDownContainer = {
+    //   position: "absolute",
+    //   zIndex: 1,
+    //   top: '200px',
+    //   display: 'none',
+    //   maxHeight: "200px",
+    //   color: "white"
+    // }
 
     return (
       <div>
@@ -276,10 +359,10 @@ class App extends Component {
           {this.showTabs()}
           {/* {this.extractFiles(this.state.allFiles)} */}
         </div>
-        <div id="dropdown" style={dropDownContainer}>
+        <div id="dropdown" style={this.state.dropDownContainer}>
           {/* This is dummy div */}
           <ul>
-            {this.displayDropDown()}
+            {(this.state.dropDownActive ? this.displayDropDown() : null)}
           </ul>
         </div>
         <div style={commitButtonContainer}>
@@ -293,8 +376,10 @@ class App extends Component {
           </ButtonToolbar>
         </div>
         <textarea style={textAreaStyle} name="body" id="editor"
+          onKeyDown={this.onKeyDown}
           onChange={this.handleChange}
-          value={this.state.editorData} />
+          value={this.state.editorData}
+        />
       </div>
     )
   }
@@ -313,25 +398,29 @@ export default App;
 
 
 
-{/* <div className="controls">
-            <button onClick={this.resetCaretPosition}>Reset caret position</button>
-            <button onClick={this.printCurrentCaretPosition}>Print current caret position to the console</button>
-        </div> */}
-{/* <ReactTextareaAutocomplete
-          className="my-textarea"
-          loadingComponent={() => <span>Loading</span>}
-          trigger = {{
-            ":": {
-              dataProvider: token => {
-                return [
-                  { name: "smile", char: "🙂" },
-                  { name: "heart", char: "❤️" }
-                ];
-              },
-              component: Item,
-              output: (item, trigger) => item.char
-            }
-          }}          
-          ref={(rta) => { this.rta = rta; } }
-          onCaretPositionChange={this.onCaretPositionChange}
-        /> */}
+// {/* <div className="controls">
+//             <button onClick={this.          {/* This is dummy div */}
+// etCaretPosition}> Reset caret position</button >
+//   <button onClick={this.          {/* This is dummy div */}
+//     ntCurrentCaretPosition}>Print current caret position to the console</button>
+//         </div > * /}
+// {/* <ReactTextareaAutocomplete
+//           className="my-textarea"
+//           loadingComponent={() =>           {/* This is dummy div */}
+// an > Loading</span >}
+// trigger = {{
+//   ":": {
+//     dataProvider: token           {/* This is dummy div */ }
+//     {
+//       return [
+//         { name: "smile", char: "🙂" },
+//         { name: "heart", char: "❤️" }
+//       ];
+//     },
+//     component: Item,
+//       output: (item, trigger) => item.char
+//   }
+// }}
+// ref = {(rta) => { this.rta = rta; } }
+// onCaretPositionChange = { this.onCaretPositionChange }
+//   /> * /}
