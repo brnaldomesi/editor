@@ -7,6 +7,7 @@ import { ButtonToolbar } from 'react-bootstrap';
 import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
 var getCaretCoordinates = require('textarea-caret-position');
 import { position, offset } from 'caret-pos';
+import ContentEditable from 'react-contenteditable'
 
 
 
@@ -14,26 +15,30 @@ import { position, offset } from 'caret-pos';
 class App extends Component {
   constructor() {
     super();
+    this.contentEditable = React.createRef();
+
     this.state = {
       response: [],
       // endpoint: "http://localhost:3000",
-      editorData: "",
+      // editorData: "<a href='https://www.w3schools.com'> Visit w3 schools </a>",
+      editorData : "",
       currentEditorFileName: "",
       allFiles: [],
       dropDownActive: false,
       dropDownWord: "",
       backspace: false,
       startIndex: -1,
-      endIndex : 0,
+      endIndex: 0,
       dropDownContainer: {
         position: "absolute",
         zIndex: 1,
         top: '200px',
         display: 'none',
         maxHeight: "200px",
-        maxWidth: "500px",
+        maxWidth: "400px",
         // height: 'fit-content',
-        width : 'fit-content',
+        // width : '400px',
+        width: 'fit-content',
         color: "black",
         left: '0',
         backgroundColor: 'white',
@@ -208,28 +213,41 @@ class App extends Component {
 
   handleChange = (event) => {
     console.log(window.innerWidth)
-
+    console.log(event.target)
     // console.log(event.target.selectionEnd);
     console.log(event)
     let value = event.target.value;
-    let currentIndex = event.target.selectionEnd;
-    console.log(currentIndex)
-    let wordArray = event.target.value.split("");
-    console.log(wordArray[wordArray.length - 1]);
-    let currentWord = wordArray[wordArray.length - 1];
+    // let currentIndex = event.target.selectionEnd;
+    // console.log(currentIndex)
+    // let wordArray = event.target.value.split("");
+    // console.log(wordArray[wordArray.length - 1]);
+    // let currentWord = wordArray[wordArray.length - 1];
     let word = "";
-    let startIndex = event.target.selectionEnd;
+    // let startIndex = event.target.selectionEnd;
 
-    const input = document.querySelector('textarea');
+    // const input = document.querySelector('textarea');
+    const input = document.getElementById('editor');
     const pos = position(input); // { left: 15, top: 30, height: 20, pos: 15 }
     console.log(pos);
+    let currentIndex = pos.pos;
+    let startIndex = currentIndex;
 
-    this.setState({ dropDownContainer: { ...this.state.dropDownContainer, top: 120 + pos.top + 30, left: pos.left - 20 } })
+    // if not at right corner and bottom most
+    if (window.innerWidth > pos.left - 20 + 500 && window.innerHeight > pos.top + 30 + 200) {
+      this.setState({ dropDownContainer: { ...this.state.dropDownContainer, top: 120 + pos.top + 30, left: pos.left - 20 } })
+    } else if (window.innerWidth > pos.left - 20 + 500 && window.innerHeight < pos.top + 30 + 200) { // if not at right side but at bottom 
+      this.setState({ dropDownContainer: { ...this.state.dropDownContainer, top: window.innerHeight - 220, left: pos.left - 20 } })
+    } else if (window.innerWidth < pos.left - 20 + 500 && window.innerHeight < pos.top + 30 + 200) { // if at both right and bottom 
+      this.setState({ dropDownContainer: { ...this.state.dropDownContainer, top: window.innerHeight - 220, left: window.innerWidth - 420 } })
+    } else { // if at right side and not at the bottom
+      this.setState({ dropDownContainer: { ...this.state.dropDownContainer, top: 120 + pos.top + 30, left: window.innerWidth - 420 } })
+    }
 
     let updatingState = new Promise((resolve, reject) => {
       this.setState({ editorData: event.target.value, endIndex: currentIndex });
       resolve({ value, currentIndex, startIndex });
-    })
+    });
+
     updatingState.then(({ value, currentIndex, startIndex }) => {
       let updatingdiv = new Promise((resolve, reject) => {
         console.log(currentIndex);
@@ -256,29 +274,28 @@ class App extends Component {
         // this.setState({ dropDownWord: this.state.dropDownWord + wordArray[wordArray.length - 1] })
         // this.setState({ dropDownWord: (value.split(' ')[value.split(' ').length - 1].split('@')[1] || "").toLowerCase() })
         this.setState({ dropDownWord: value.slice(this.state.startIndex, currentIndex).toLowerCase() })
-        // }
-        // }
       })
     })
 
   }
 
   appendFileName = (filename) => {
-    let first = this.state.editorData.slice(0, this.state.startIndex-1);
+    let first = this.state.editorData.slice(0, this.state.startIndex - 1);
     let middle = filename;
     let last = this.state.editorData.slice(this.state.endIndex);
     console.log(first + middle + last)
-    this.setState({editorData : first + middle + last, dropDownWord: "", dropDownActive: false});
+    this.setState({ editorData: first + middle + last, dropDownWord: "", dropDownActive: false });
     document.getElementById('dropdown').style.display = "none";
   }
 
   displayDropDown = () => {
-    // let liArray
+    // let li Array
     if (this.state.dropDownActive) {
       return (
         this.state.allFiles.map(file => {
           if (file.value.toLowerCase().includes(this.state.dropDownWord)) {
-            return (<p onClick={()=>{ this.appendFileName(file.id)}}>{file.id} <hr /></p>);
+            this.count++;
+            return (<p onClick={() => { this.appendFileName(file.value) }}>{file.id} <hr /></p>);
           }
         })
       )
@@ -317,8 +334,8 @@ class App extends Component {
     let commitButtonContainer = {
       position: 'relative',
       color: 'white',
-      float : 'right',
-      marginRight : '40px'
+      float: 'right',
+      marginRight: '40px'
       // zIndex: 1
     }
 
@@ -344,10 +361,20 @@ class App extends Component {
             <Button variant="info" onClick={() => { this.postApiCall('/updateFile', { file: this.state.currentEditorFileName, data: this.state.editorData }) }}>Save</Button>
           </ButtonToolbar>
         </div>
-        <textarea style={textAreaStyle} name="body" id="editor"
+        {/* <textarea  style={textAreaStyle} name="body" id="editor"
           onKeyDown={this.onKeyDown}
           onChange={this.handleChange}
           value={this.state.editorData}
+        /> */}
+        <ContentEditable
+          id='editor'
+          style={textAreaStyle}
+          innerRef={this.contentEditable}
+          html={this.state.editorData} // innerHTML of the editable div
+          disabled={false}       // use true to disable editing
+          onChange={this.handleChange} // handle innerHTML change
+          tagName='div' // Use a custom HTML tag (uses a div by default)
+          onKeyDown={this.onKeyDown}
         />
       </div>
     )
