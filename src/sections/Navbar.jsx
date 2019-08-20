@@ -1,5 +1,7 @@
 import React from 'react'
 
+import RenderTree from '../components/RenderTree'
+
 import {
 	CollapseLeftIcon,
 	CaretLeftIcon,
@@ -7,7 +9,12 @@ import {
 	ExpandRightIcon,
 } from '../assets/Icons'
 
-const Navbar = ({ isNavbarCollapsed, setNavbarState }) => {
+const Navbar = ({
+	isNavbarCollapsed,
+	setNavbarState,
+	setFolderPath,
+	currentFolderPath,
+}) => {
 	return (
 		<aside id="navbar">
 			<div id="navbar__header">
@@ -21,6 +28,9 @@ const Navbar = ({ isNavbarCollapsed, setNavbarState }) => {
 				>
 					{isNavbarCollapsed ? ExpandRightIcon : CollapseLeftIcon}
 				</div>
+			</div>
+			<div id="navbar__explorer">
+				<RenderTree setFolderPath={setFolderPath} />
 			</div>
 		</aside>
 	)
