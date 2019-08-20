@@ -47,7 +47,16 @@ const RenderTree = ({ setFolderPath, currentFolderPath }) => {
 			return FolderClosedIcon
 		},
 		Header: props => {
-			return <span style={{ marginLeft: '8px' }}>{props.node.name}</span>
+			return (
+				<span style={{ marginLeft: '8px' }} title={props.node.name}>
+					{props.node.name &&
+						`${
+							props.node.name.length > 12
+								? `${props.node.name.slice(0, 12)}...`
+								: props.node.name
+						}`}
+				</span>
+			)
 		},
 		Container: props => {
 			return (

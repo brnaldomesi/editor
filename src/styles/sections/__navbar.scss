@@ -32,4 +32,6 @@
 
 #navbar__explorer {
     padding: var(--spacer-2);
+    overflow-y: auto;
+    height: calc(100vh - 76px);
 }
