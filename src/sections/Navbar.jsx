@@ -12,8 +12,8 @@ import {
 const Navbar = ({
 	isNavbarCollapsed,
 	setNavbarState,
-	setFolderPath,
-	currentFolderPath,
+	setFile,
+	selectedFile,
 }) => {
 	return (
 		<aside id="navbar">
@@ -30,7 +30,7 @@ const Navbar = ({
 				</div>
 			</div>
 			<div id="navbar__explorer">
-				<RenderTree setFolderPath={setFolderPath} />
+				<RenderTree setFile={setFile} />
 			</div>
 		</aside>
 	)

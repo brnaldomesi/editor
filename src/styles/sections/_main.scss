@@ -1,8 +1,9 @@
 #main {
     [data-reach-tab-list] {
         display: flex;
+        border-bottom: 1px solid var(--border);
         button {
-            height: 40px;
+            height: 39px;
             padding: 0;
             width: 180px;
             background: transparent;
@@ -11,19 +12,18 @@
             cursor: pointer;
             @include flex(null, space-between);
             border-right: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
             span:first-child {
-                height: 40px;
-                width: calc(100% - 40px);
-                line-height: 42px;
+                height: 39px;
+                width: calc(100% - 39px);
+                line-height: 41px;
                 padding-left: 16px; 
                 &:hover {
                     background: rgba(#000, 0.1);
                 }
             }
             span:last-child {
-                width: 40px;
-                height: 40px;
+                width: 39px;
+                height: 39px;
                 visibility: hidden;
                 @include flex(center, center);
                 &:hover {
@@ -31,7 +31,7 @@
                 }
             }
             &:last-child {
-                width: 40px;
+                width: 39px;
                 @include flex(center, center);
             }
             &:hover {

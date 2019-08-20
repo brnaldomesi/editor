@@ -7,10 +7,15 @@ import Sidebar from './sections/Sidebar'
 
 const App = () => {
 	const [isNavbarCollapsed, setNavbarState] = React.useState(false)
-	const [currentFolderPath, setCurrentFolderPath] = React.useState(
-		'./filesystem'
-	)
-	const setFolderPath = value => setCurrentFolderPath(value)
+	const [selectedFile, setSelectedFile] = React.useState({
+		path: './filesystem',
+		type: '',
+	})
+	const setFile = value =>
+		setSelectedFile({
+			path: value.path,
+			type: value.type,
+		})
 	return (
 		<div
 			id="wrapper"
@@ -20,10 +25,9 @@ const App = () => {
 			<Navbar
 				isNavbarCollapsed={isNavbarCollapsed}
 				setNavbarState={setNavbarState}
-				setFolderPath={setFolderPath}
-				currentFolderPath={currentFolderPath}
+				setFile={setFile}
 			/>
-			<Main />
+			<Main selectedFile={selectedFile} />
 			<Sidebar />
 		</div>
 	)

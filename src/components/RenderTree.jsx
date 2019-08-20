@@ -8,7 +8,7 @@ import GET_EXPLORER_CONTENT from '../queries/getExplorerContent'
 
 import { FolderClosedIcon, FolderOpenIcon, FileIcon } from '../assets/Icons'
 
-const RenderTree = ({ setFolderPath, currentFolderPath }) => {
+const RenderTree = ({ setFile, selectedFile }) => {
 	const {
 		loading: queryLoading,
 		error: queryError,
@@ -21,7 +21,7 @@ const RenderTree = ({ setFolderPath, currentFolderPath }) => {
 	React.useEffect(() => {
 		if (queryData.getFolderWithFiles) {
 			setData({ ...queryData.getFolderWithFiles, toggled: true })
-			setFolderPath(queryData.getFolderWithFiles.path)
+			setFile(queryData.getFolderWithFiles.path)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [queryData])
@@ -34,7 +34,7 @@ const RenderTree = ({ setFolderPath, currentFolderPath }) => {
 			node.toggled = toggled
 		}
 		setCursor(node)
-		setFolderPath(node.path)
+		setFile({ path: node.path, type: node.type })
 		setData(Object.assign({}, data))
 	}
 	const decorators = {
@@ -106,7 +106,7 @@ const RenderTree = ({ setFolderPath, currentFolderPath }) => {
 }
 
 RenderTree.propTypes = {
-	setFolderPath: PropTypes.func.isRequired,
+	setFile: PropTypes.func.isRequired,
 }
 
 export default RenderTree

@@ -4,7 +4,12 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
 import { AddIcon, CloseIcon } from '../assets/Icons'
 
-const Main = () => {
+const Main = ({ selectedFile }) => {
+	console.log(
+		'TCL: Main -> selectedFile',
+		selectedFile.path,
+		selectedFile.type
+	)
 	const [tabs, setTabs] = React.useState([
 		{
 			name: 'One',
