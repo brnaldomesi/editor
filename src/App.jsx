@@ -7,6 +7,10 @@ import Sidebar from './sections/Sidebar'
 
 const App = () => {
 	const [isNavbarCollapsed, setNavbarState] = React.useState(false)
+	const [currentFolderPath, setCurrentFolderPath] = React.useState(
+		'./filesystem'
+	)
+	const setFolderPath = value => setCurrentFolderPath(value)
 	return (
 		<div
 			id="wrapper"
@@ -16,6 +20,8 @@ const App = () => {
 			<Navbar
 				isNavbarCollapsed={isNavbarCollapsed}
 				setNavbarState={setNavbarState}
+				setFolderPath={setFolderPath}
+				currentFolderPath={currentFolderPath}
 			/>
 			<Main />
 			<Sidebar />
