@@ -5,17 +5,17 @@
     grid-template-areas: "head head head" "navbar main sidebar";
     width: 100vw;
     height: 100vh;
-}
-
-#header,
-#main,
-#navbar,
-#sidebar {
-    outline: 1px solid #000;
+    &.navbar__collapsed {
+        grid-template-columns: 40px 1fr 64px;
+        #navbar__header__nav {
+            display: none;
+        }
+    }
 }
 
 #header {
     grid-area: head;
+    border-bottom: 1px solid var(--border);
 }
 
 #navbar {
@@ -24,6 +24,8 @@
 
 #main {
     grid-area: main;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
 }
 
 #sidebar {
