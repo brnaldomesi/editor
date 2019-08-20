@@ -7,7 +7,8 @@
     height: 100vh;
     &.navbar__collapsed {
         grid-template-columns: 40px 1fr 64px;
-        #navbar__header__nav {
+        #navbar__header__nav,
+        #navbar__explorer {
             display: none;
         }
     }
