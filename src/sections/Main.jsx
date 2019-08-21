@@ -9,17 +9,14 @@ import GET_FILE from '../queries/getFile'
 const Main = ({ selectedFile }) => {
 	const [tabs, setTabs] = React.useState([])
 
-	const {
-		loading: queryLoading,
-		error: queryError,
-		data: queryData,
-	} = useQuery(GET_FILE, { variables: { path: selectedFile.path } })
+	const { loading: queryLoading, data: queryData } = useQuery(GET_FILE, {
+		variables: { path: selectedFile.path },
+	})
 
 	React.useEffect(() => {
 		if (!queryLoading && queryData && Object.keys(queryData).length !== 0) {
-			console.log('queryData out', queryData, tabs)
-			if (!tabs.some(tab => tab.name === queryData.name)) {
-				setTabs([
+			if (!tabs.some(tab => tab.name === queryData.getFile.name)) {
+				setTabs(tabs => [
 					...tabs,
 					{
 						name: queryData.getFile.name,
@@ -32,7 +29,6 @@ const Main = ({ selectedFile }) => {
 	// Tabs functionality
 	const removeTab = index =>
 		setTabs([...tabs.filter((_, tabIndex) => tabIndex !== index)])
-	// const addTab = () => setTabs([...tabs, { name: 'Five', content: 'Tab5' }])
 
 	if (tabs.length === 0) {
 		return <main id="main">Select a file from the explorer.</main>
@@ -43,13 +39,16 @@ const Main = ({ selectedFile }) => {
 				<TabList>
 					{tabs.map((tab, index) => (
 						<Tab key={index}>
-							<span>{tab.name}</span>
+							<span title={tab.name}>{`${
+								tab.name.length > 12
+									? `${tab.name.slice(0, 10)}...`
+									: tab.name
+							}`}</span>
 							<span onClick={() => removeTab(index)}>
 								{CloseIcon}
 							</span>
 						</Tab>
 					))}
-					{/* <Tab onClick={() => addTab()}>{AddIcon}</Tab> */}
 				</TabList>
 
 				<TabPanels>
