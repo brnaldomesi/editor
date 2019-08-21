@@ -8,7 +8,7 @@ import Sidebar from './sections/Sidebar'
 const App = () => {
 	const [isNavbarCollapsed, setNavbarState] = React.useState(false)
 	const [selectedFile, setSelectedFile] = React.useState({
-		path: './filesystem',
+		path: '',
 		type: '',
 	})
 	const setFile = value =>

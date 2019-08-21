@@ -21,7 +21,6 @@ const RenderTree = ({ setFile, selectedFile }) => {
 	React.useEffect(() => {
 		if (queryData.getFolderWithFiles) {
 			setData({ ...queryData.getFolderWithFiles, toggled: true })
-			setFile(queryData.getFolderWithFiles.path)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [queryData])
@@ -34,7 +33,9 @@ const RenderTree = ({ setFile, selectedFile }) => {
 			node.toggled = toggled
 		}
 		setCursor(node)
-		setFile({ path: node.path, type: node.type })
+		if (node.type === 'file') {
+			setFile({ path: node.path, type: node.type })
+		}
 		setData(Object.assign({}, data))
 	}
 	const decorators = {
@@ -48,7 +49,12 @@ const RenderTree = ({ setFile, selectedFile }) => {
 		},
 		Header: props => {
 			return (
-				<span style={{ marginLeft: '8px' }} title={props.node.name}>
+				<span
+					style={{
+						marginLeft: '8px',
+					}}
+					title={props.node.name}
+				>
 					{props.node.name &&
 						`${
 							props.node.name.length > 12
