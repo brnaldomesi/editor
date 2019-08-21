@@ -1,4 +1,9 @@
 #main {
+    [data-reach-tabs] {
+        height: 100%;
+        display: grid;
+        grid-template-rows: 40px 1fr; 
+    }
     [data-reach-tab-list] {
         display: flex;
         border-bottom: 1px solid var(--border);
@@ -30,15 +35,19 @@
                     background: rgba(#000, 0.1);
                 }
             }
-            // &:last-child {
-            //     width: 39px;
-            //     @include flex(center, center);
-            // }
             &:hover {
                 span:last-child {
                     visibility: visible;
                 }
             }
+            &[aria-selected="true"] {
+                border-bottom: 2px solid var(--border);
+            }
         }
+    }
+    [data-reach-tab-panel] {
+        padding: var(--spacer-2);
+        height: calc(100vh - 72px);
+        overflow-y: auto;
     }
 }
