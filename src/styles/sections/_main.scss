@@ -49,5 +49,8 @@
         padding: var(--spacer-2);
         height: calc(100vh - 72px);
         overflow-y: auto;
+        &:focus {
+            outline: none;
+        }
     }
 }
