@@ -8,6 +8,7 @@ import GET_FILE from '../queries/getFile'
 
 const Main = ({ selectedFile }) => {
 	const [tabs, setTabs] = React.useState([])
+	const [tabIndex, setTabIndex] = React.useState(0)
 
 	const { loading: queryLoading, data: queryData } = useQuery(GET_FILE, {
 		variables: { path: selectedFile.path },
@@ -23,6 +24,11 @@ const Main = ({ selectedFile }) => {
 						content: queryData.getFile.content,
 					},
 				])
+				setTabIndex(tabs.length)
+			} else {
+				setTabIndex(
+					tabs.findIndex(tab => tab.name === queryData.getFile.name)
+				)
 			}
 		}
 	}, [queryData, queryLoading, selectedFile])
@@ -30,12 +36,15 @@ const Main = ({ selectedFile }) => {
 	const removeTab = index =>
 		setTabs([...tabs.filter((_, tabIndex) => tabIndex !== index)])
 
+	const handleTabsChange = index => {
+		setTabIndex(index)
+	}
 	if (tabs.length === 0) {
 		return <main id="main">Select a file from the explorer.</main>
 	}
 	return (
 		<main id="main">
-			<Tabs>
+			<Tabs index={tabIndex} onChange={handleTabsChange}>
 				<TabList>
 					{tabs.map((tab, index) => (
 						<Tab key={index}>
