@@ -11,6 +11,13 @@
         #navbar__explorer {
             display: none;
         }
+        #main {
+            width: calc(100vw - 104px);
+            [data-reach-tab-list],
+            [data-reach-tab-panels] {
+                width: calc(100vw - 104px);
+            }
+        }
     }
 }
 
@@ -24,9 +31,14 @@
 }
 
 #main {
+    width: calc(100vw - 304px);
     grid-area: main;
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
+    [data-reach-tab-list],
+    [data-reach-tab-panels] {
+        width: calc(100vw - 304px);
+    }
 }
 
 #sidebar {
