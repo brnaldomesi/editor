@@ -21,7 +21,7 @@ const Main = ({ selectedFile }) => {
 					...tabs,
 					{
 						name: queryData.getFile.name,
-						content: queryData.getFile.content,
+						content: JSON.parse(queryData.getFile.content),
 					},
 				])
 				setTabIndex(tabs.length)
@@ -62,7 +62,9 @@ const Main = ({ selectedFile }) => {
 
 				<TabPanels>
 					{tabs.map((tab, index) => (
-						<TabPanel key={index}>{tab.content}</TabPanel>
+						<TabPanel key={index}>
+							<pre>{JSON.stringify(tab.content, null, 4)}</pre>
+						</TabPanel>
 					))}
 				</TabPanels>
 			</Tabs>

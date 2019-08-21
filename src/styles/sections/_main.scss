@@ -6,11 +6,15 @@
     }
     [data-reach-tab-list] {
         display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
         border-bottom: 1px solid var(--border);
         button {
+            flex: 1;
             height: 39px;
             padding: 0;
-            width: 180px;
+            max-width: 180px;
+            min-width: 180px;
             background: transparent;
             border: none;
             text-align: left;
