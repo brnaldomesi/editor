@@ -1,4 +1,5 @@
 #main {
+    position: relative;
     [data-reach-tabs] {
         height: 100%;
         display: grid;
@@ -55,6 +56,25 @@
         overflow-y: auto;
         &:focus {
             outline: none;
+        }
+    }
+    #tabs__control {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 40px;
+        width: auto;
+        border-left: 1px solid var(--border);
+        z-index: 100;
+        span {
+            width: 40px;
+            height: 40px;
+            float: left;
+            cursor: pointer;
+            @include flex(center, center);
+            &:hover {
+                background: rgba(#000, 0.1);
+            }
         }
     }
 }

@@ -40,6 +40,22 @@ export const reducer = (state, action) => {
 				...state,
 				currentTab: action.payload,
 			}
+		case 'leftTab':
+			return {
+				...state,
+				currentTab:
+					state.currentTab === 0
+						? state.currentTab
+						: state.currentTab - 1,
+			}
+		case 'rightTab':
+			return {
+				...state,
+				currentTab:
+					state.tabs.length - 1 === state.currentTab
+						? state.currentTab
+						: state.currentTab + 1,
+			}
 		default:
 			return state
 	}
