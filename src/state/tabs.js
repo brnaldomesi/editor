@@ -1,6 +1,7 @@
 export const initialState = {
 	tabs: [],
 	currentTab: 0,
+	isTabDropDownVisible: false,
 }
 
 export const reducer = (state, action) => {
@@ -55,6 +56,17 @@ export const reducer = (state, action) => {
 					state.tabs.length - 1 === state.currentTab
 						? state.currentTab
 						: state.currentTab + 1,
+			}
+		case 'toggleTabDropdown':
+			return {
+				...state,
+				isTabDropDownVisible: action.payload,
+			}
+		case 'closeAllTabs':
+			return {
+				tabs: [],
+				currentTab: 0,
+				isTabDropDownVisible: false,
 			}
 		default:
 			return state

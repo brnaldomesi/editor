@@ -6,7 +6,13 @@ import socketIOClient from 'socket.io-client'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
 // Import Icons
-import { CloseIcon, CaretLeftIcon, CaretRightIcon } from '../assets/Icons'
+import {
+	CloseIcon,
+	CaretLeftIcon,
+	CaretRightIcon,
+	CaretDownIcon,
+	CaretUpIcon,
+} from '../assets/Icons'
 
 // Import Queries
 import GET_FILE from '../queries/getFile'
@@ -103,13 +109,36 @@ const Main = ({ selectedFile }) => {
 					))}
 				</TabPanels>
 			</Tabs>
-			<div id="tabs__control">
+			<div id="tabs__navigation">
 				<span onClick={() => dispatch({ type: 'leftTab' })}>
 					{CaretLeftIcon}
 				</span>
 				<span onClick={() => dispatch({ type: 'rightTab' })}>
 					{CaretRightIcon}
 				</span>
+				<span
+					onClick={() =>
+						dispatch({
+							type: 'toggleTabDropdown',
+							payload: !state.isTabDropDownVisible,
+						})
+					}
+				>
+					{state.isTabDropDownVisible ? CaretUpIcon : CaretDownIcon}
+				</span>
+				{state.isTabDropDownVisible && (
+					<div id="tab__options">
+						<ul>
+							<li
+								onClick={() =>
+									dispatch({ type: 'closeAllTabs' })
+								}
+							>
+								Close All Tabs
+							</li>
+						</ul>
+					</div>
+				)}
 			</div>
 		</main>
 	)
