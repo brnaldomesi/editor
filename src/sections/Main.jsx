@@ -6,7 +6,7 @@ import socketIOClient from 'socket.io-client'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
 // Import Icons
-import { CloseIcon } from '../assets/Icons'
+import { CloseIcon, CaretLeftIcon, CaretRightIcon } from '../assets/Icons'
 
 // Import Queries
 import GET_FILE from '../queries/getFile'
@@ -103,6 +103,14 @@ const Main = ({ selectedFile }) => {
 					))}
 				</TabPanels>
 			</Tabs>
+			<div id="tabs__control">
+				<span onClick={() => dispatch({ type: 'leftTab' })}>
+					{CaretLeftIcon}
+				</span>
+				<span onClick={() => dispatch({ type: 'rightTab' })}>
+					{CaretRightIcon}
+				</span>
+			</div>
 		</main>
 	)
 }
