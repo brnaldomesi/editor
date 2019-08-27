@@ -19,6 +19,7 @@ import GET_FILE from '../queries/getFile'
 
 // Import Util Functions
 import fetchCall from '../utils/fetchCall'
+import isJson from '../utils/isJson'
 
 // Import State
 import { initialState, reducer } from '../state/tabs'
@@ -29,7 +30,11 @@ const Main = ({ selectedFile }) => {
 		variables: { path: selectedFile.path },
 	})
 	React.useEffect(() => {
-		if (queryData && Object.keys(queryData).length !== 0) {
+		if (
+			queryData &&
+			Object.keys(queryData).length !== 0 &&
+			isJson(queryData.getFile.content)
+		) {
 			dispatch({ type: 'addTab', payload: queryData.getFile })
 		}
 	}, [queryData, selectedFile])
