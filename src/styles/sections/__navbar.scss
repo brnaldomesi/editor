@@ -1,0 +1,37 @@
+#navbar__header {
+    height: 40px;
+    border-bottom: 1px solid var(--border);
+    @include flex(center, space-between);
+}
+
+#navbar__header__nav {
+    height: 40px;
+    border-right: 1px solid var(--border);
+    button {
+        height: 40px;
+        width: 40px;
+        border: 0;
+        cursor: pointer;
+        background: transparent;
+        &:hover {
+            background: rgba(#000, 0.1);
+        }
+    }
+}
+
+#navbar__header__collapse {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    @include flex(center,center);
+    border-left: 1px solid var(--border);
+    &:hover {
+        background: rgba(#000, 0.1);
+    }
+}
+
+#navbar__explorer {
+    padding: var(--spacer-2);
+    overflow-y: auto;
+    height: calc(100vh - 76px);
+}
