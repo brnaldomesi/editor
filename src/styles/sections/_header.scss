@@ -1,0 +1,24 @@
+#header {
+    @include flex(center, space-between);
+    padding-left: 12px;
+}
+
+#header__actions {
+    height: 32px;
+    width: 64px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    button {
+        height: 32px;
+        width: 32px;
+        border: 0;
+        cursor: pointer;
+        border-left: 1px solid var(--border);
+        background: transparent;
+        @include flex(center,center);
+        &:hover {
+            background: rgba(#000, 0.1);
+        }
+    }
+}
