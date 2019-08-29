@@ -6,6 +6,8 @@
 #header__actions {
     height: 32px;
     width: 64px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     button {
         height: 32px;

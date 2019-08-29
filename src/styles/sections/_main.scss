@@ -2,16 +2,22 @@
     position: relative;
     [data-reach-tabs] {
         height: 100%;
+        display: -ms-grid;
         display: grid;
+        -ms-grid-rows: 40px 1fr;
         grid-template-rows: 40px 1fr; 
     }
     [data-reach-tab-list] {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;
         border-bottom: 1px solid var(--border);
         button {
-            flex: 1;
+            -webkit-box-flex: 1;
+                -ms-flex: 1;
+                    flex: 1;
             height: 39px;
             padding: 0;
             max-width: 180px;
@@ -59,12 +65,14 @@
         }
     }
     #tabs__navigation {
+        background: #fff;
         position: absolute;
         top: 0;
         right: 0;
         height: 40px;
         width: auto;
         border-left: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
         z-index: 100;
         span {
             width: 40px;

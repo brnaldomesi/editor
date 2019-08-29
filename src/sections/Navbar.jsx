@@ -18,10 +18,10 @@ const Navbar = ({
 	return (
 		<aside id="navbar">
 			<div id="navbar__header">
-				<div id="navbar__header__nav">
+				{/* <div id="navbar__header__nav">
 					<button>{CaretLeftIcon}</button>
 					<button>{CaretRightIcon}</button>
-				</div>
+				</div> */}
 				<div
 					id="navbar__header__collapse"
 					onClick={() => setNavbarState(!isNavbarCollapsed)}
