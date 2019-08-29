@@ -1,4 +1,4 @@
-### File Manager - ReactJs
+### File Editor - ReactJs
 
 Status - Under Construction🚧  
 Description - A simple file editor built with react.
