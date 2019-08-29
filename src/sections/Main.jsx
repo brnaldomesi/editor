@@ -65,9 +65,11 @@ const Main = ({ selectedFile }) => {
 					},
 				}),
 			}
-			fetchCall(url, opts).then(data => {
-				const { getFile } = data.data
-				dispatch({ type: 'addTab', payload: getFile })
+			fetchCall(url, opts).then(async data => {
+				const { getFile } = await data.data
+				if (getFile && getFile.hasOwnProperty('name')) {
+					dispatch({ type: 'addTab', payload: getFile })
+				}
 			})
 		})
 	}, [])
