@@ -1,0 +1,8 @@
+{
+  "realm": "demo",
+  "auth-server-url": "https://localhost:8443/auth",
+  "ssl-required": "external",
+  "resource": "editor",
+  "public-client": true,
+  "confidential-port": 0
+}
